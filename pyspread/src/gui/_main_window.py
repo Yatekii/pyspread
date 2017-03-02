@@ -817,8 +817,6 @@ class MainWindowEventHandlers(EventMixin):
         if filepath is None:
             return
 
-        filetype = filetypes[filterindex]
-
         # Change the main window filepath state
 
         self.main_window.filepath = filepath
@@ -826,7 +824,7 @@ class MainWindowEventHandlers(EventMixin):
         # Load file into grid
         post_command_event(self.main_window,
                            self.main_window.GridActionOpenMsg,
-                           attr={"filepath": filepath, "filetype": filetype})
+                           attr={"filepath": filepath})
 
         # Set Window title to new filepath
 
