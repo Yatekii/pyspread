@@ -370,24 +370,44 @@ class FileActions(Actions):
 
                 # Disable undo
                 self.grid.code_array.unredo.active = True
+                if xlrd:
+                    # XLRD is loaded so it's safe to use its Exception type
+                    try:
+                        wx.BeginBusyCursor()
+                        self.grid.Disable()
+                        self.clear()
+                        interface = Interface(self.grid.code_array, infile)
+                        interface.to_code_array()
 
-                try:
-                    wx.BeginBusyCursor()
-                    self.grid.Disable()
-                    self.clear()
-                    interface = Interface(self.grid.code_array, infile)
-                    interface.to_code_array()
+                    except (ValueError, xlrd.biffh.XLRDError), err:
+                        post_command_event(self.main_window, self.StatusBarMsg,
+                                        text=str(err))
 
-                except (ValueError, xlrd.biffh.XLRDError), err:
-                    post_command_event(self.main_window, self.StatusBarMsg,
-                                       text=str(err))
+                    finally:
+                        self.grid.GetTable().ResetView()
+                        post_command_event(self.main_window, self.ResizeGridMsg,
+                                        shape=self.grid.code_array.shape)
+                        self.grid.Enable()
+                        wx.EndBusyCursor()
+                else:
+                    # XLRD is not loaded so it's Exception type is not needed and should not be loaded
+                    try:
+                        wx.BeginBusyCursor()
+                        self.grid.Disable()
+                        self.clear()
+                        interface = Interface(self.grid.code_array, infile)
+                        interface.to_code_array()
 
-                finally:
-                    self.grid.GetTable().ResetView()
-                    post_command_event(self.main_window, self.ResizeGridMsg,
-                                       shape=self.grid.code_array.shape)
-                    self.grid.Enable()
-                    wx.EndBusyCursor()
+                    except ValueError, err:
+                        post_command_event(self.main_window, self.StatusBarMsg,
+                                        text=str(err))
+
+                    finally:
+                        self.grid.GetTable().ResetView()
+                        post_command_event(self.main_window, self.ResizeGridMsg,
+                                        shape=self.grid.code_array.shape)
+                        self.grid.Enable()
+                        wx.EndBusyCursor()
 
                 # Execute macros
                 self.main_window.actions.execute_macros()
