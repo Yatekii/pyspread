@@ -181,7 +181,7 @@ class MainMenu(_filledMenu, EventMixin):
             [wx.Menu, _("&File"), [
                 [item, [self.NewMsg, _("&New") + "\tCtrl+n",
                         _("Create a new, empty spreadsheet"), wx.ID_NEW]],
-                [item, [self.OpenMsg, _("&Open"),
+                [item, [self.OpenMsg, _("&Open") + "\tCtrl+o",
                         _("Open spreadsheet from file"), wx.ID_OPEN]],
                 ["Separator"],
                 [item, [self.SaveMsg, _("&Save") + "\tCtrl+s",
